@@ -22,23 +22,22 @@ const Home = () => {
       alert("Iltimos, barcha maydonlarni to‘ldiring!");
       return;
     }
-
-    const updatedRooms = rooms.map((room) =>
-      room.id === selectedRoom.id
-        ? {
-            ...room,
-            booked: [
-              ...(room.booked || []), // Eski bandlarni saqlash
-              { name, phone, date, timeSlot }, // Yangi band qo‘shish
-            ],
-          }
-        : room
-    );
-
+  
+    const newBooking = { name, phone, date, timeSlot };
+  
     axios
-      .post("https://muxtasham2-2.onrender.com/book-room", { updatedRooms })
+      .post("https://muxtasham2-2.onrender.com/book-room", {
+        roomId: selectedRoom.id,
+        booking: newBooking,
+      })
       .then(() => {
-        setRooms(updatedRooms);
+        setRooms((prevRooms) =>
+          prevRooms.map((room) =>
+            room.id === selectedRoom.id
+              ? { ...room, booked: [...(room.booked || []), newBooking] }
+              : room
+          )
+        );
         setIsModalOpen(false);
         setSelectedRoom(null);
         setName("");
@@ -52,6 +51,7 @@ const Home = () => {
         alert("Xatolik yuz berdi!");
       });
   };
+  
 
   const availableRooms = rooms.filter(
     (room) =>

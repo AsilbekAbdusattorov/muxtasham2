@@ -1,51 +1,53 @@
-import express from "express";
-import fs from "fs";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require("express");
+const fs = require("fs");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const ROOMS_FILE = "rooms.json";
 
-const ROOMS_FILE = path.join(__dirname, "rooms.json");
-
-// Middleware
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
-// Xonalar ma'lumotlarini yuklash
+// Xonalarni yuklash funksiyasi
 const loadRooms = () => {
-  if (!fs.existsSync(ROOMS_FILE)) {
-    fs.writeFileSync(ROOMS_FILE, JSON.stringify([], null, 2));
+  try {
+    const data = fs.readFileSync(ROOMS_FILE);
+    return JSON.parse(data);
+  } catch (err) {
+    return [];
   }
-  return JSON.parse(fs.readFileSync(ROOMS_FILE, "utf-8"));
 };
 
-// Asosiy sahifa (404 chiqmasligi uchun)
-app.get("/", (req, res) => {
-  res.send("Muhtasham Backend ishlayapti! 🚀");
-});
-
-// Xonalar ro‘yxatini olish
+// Barcha xonalarni olish
 app.get("/rooms", (req, res) => {
   const rooms = loadRooms();
   res.json(rooms);
 });
 
-// Xonani band qilish
+// Xona band qilish
 app.post("/book-room", (req, res) => {
-  const { updatedRooms } = req.body;
-  fs.writeFile(ROOMS_FILE, JSON.stringify(updatedRooms, null, 2), (err) => {
+  const { roomId, booking } = req.body;
+  let rooms = loadRooms();
+
+  const roomIndex = rooms.findIndex((room) => room.id === roomId);
+  if (roomIndex === -1) {
+    return res.status(404).json({ message: "Xona topilmadi" });
+  }
+
+  if (!rooms[roomIndex].booked) {
+    rooms[roomIndex].booked = [];
+  }
+  rooms[roomIndex].booked.push(booking);
+
+  fs.writeFile(ROOMS_FILE, JSON.stringify(rooms, null, 2), (err) => {
     if (err) {
       return res.status(500).json({ message: "Xatolik yuz berdi" });
     }
-    res.json({ message: "Xona muvaffaqiyatli band qilindi!" });
+    res.json({ message: "Xona muvaffaqiyatli band qilindi!", room: rooms[roomIndex] });
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`Server ishga tushdi: https://muhtasham2backend-5.onrender.com/${PORT}`);
+  console.log(`Server ${PORT} portda ishlayapti...`);
 });
