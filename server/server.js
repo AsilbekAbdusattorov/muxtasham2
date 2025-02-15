@@ -84,10 +84,18 @@ app.delete("/delete-booking/:roomId/:bookingId", (req, res) => {
     const { roomId, bookingId } = req.params;
     let rooms = loadRooms();
 
+    console.log(`📌 Room ID: ${roomId}, Booking ID: ${bookingId}`);
+
     const roomIndex = rooms.findIndex((room) => String(room.id) === String(roomId));
     if (roomIndex === -1) {
-      return res.status(404).json({ message: "Xona topilmadi" });
+      return res.status(404).json({ message: "❌ Xona topilmadi" });
     }
+
+    if (!Array.isArray(rooms[roomIndex].booked)) {
+      rooms[roomIndex].booked = [];
+    }
+
+    console.log("📋 Mavjud bandliklar:", rooms[roomIndex].booked);
 
     const bookingIndex = rooms[roomIndex].booked.findIndex(
       (b) => String(b.id) === String(bookingId)
@@ -110,6 +118,7 @@ app.delete("/delete-booking/:roomId/:bookingId", (req, res) => {
     res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
   }
 });
+
 
 // ✅ Server xatolarini ushlash
 app.use((err, req, res, next) => {

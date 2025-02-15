@@ -13,10 +13,12 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleDeleteBooking = (roomId, bookingId) => {
-    if (!bookingId) {
+    if (!bookingId || bookingId.trim() === "") {
       alert("Xatolik: bookingId topilmadi!");
       return;
     }
+  
+    console.log(`🔍 O'chirilayotgan bookingId: ${bookingId}`);
   
     axios
       .delete(`https://muxtasham2-2.onrender.com/delete-booking/${roomId}/${bookingId}`)
@@ -24,7 +26,7 @@ const Home = () => {
         setRooms((prevRooms) =>
           prevRooms.map((room) =>
             room.id === roomId
-              ? { ...room, booked: room.booked.filter((b) => b.id !== bookingId) }
+              ? { ...room, booked: room.booked.filter((b) => String(b.id) !== String(bookingId)) }
               : room
           )
         );
@@ -35,6 +37,7 @@ const Home = () => {
         alert("Xatolik yuz berdi!");
       });
   };
+  
   
 
   useEffect(() => {
