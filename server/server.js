@@ -24,26 +24,43 @@ if (!fs.existsSync(ROOMS_FILE)) {
 const loadRooms = () => {
   try {
     const data = fs.readFileSync(ROOMS_FILE, "utf8");
-    return JSON.parse(data);
+    let rooms = JSON.parse(data);
+    
+    // Har bir xonaga `booked` maydonini qo‘shish
+    rooms = rooms.map((room) => ({
+      ...room,
+      booked: room.booked || [],
+    }));
+
+    return rooms;
   } catch (err) {
     console.error("❌ Faylni o‘qishda xatolik:", err);
     return [];
   }
 };
 
-// Barcha xonalarni olish
+// Xonalarni saqlash funksiyasi
+const saveRooms = (rooms) => {
+  try {
+    fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
+  } catch (err) {
+    console.error("❌ Faylni yozishda xatolik:", err);
+  }
+};
+
+// 📌 **Barcha xonalarni olish**
 app.get("/rooms", (req, res) => {
   const rooms = loadRooms();
   res.json(rooms);
 });
 
-// Xona band qilish
+// 📌 **Xona band qilish**
 app.post("/book-room", (req, res) => {
   try {
     const { roomId, booking } = req.body;
     let rooms = loadRooms();
 
-    const roomIndex = rooms.findIndex((room) => room.id === roomId);
+    const roomIndex = rooms.findIndex((room) => String(room.id) === String(roomId));
     if (roomIndex === -1) {
       console.error("❌ Xona topilmadi:", roomId);
       return res.status(404).json({ message: "Xona topilmadi" });
@@ -53,15 +70,17 @@ app.post("/book-room", (req, res) => {
       rooms[roomIndex].booked = [];
     }
 
-    rooms[roomIndex].booked.push(booking);
+    // ✅ Bandlikka noyob `id` qo‘shish
+    const newBooking = { id: Date.now().toString(), ...booking };
+    rooms[roomIndex].booked.push(newBooking);
 
     // JSON faylni yangilash
-    fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
+    saveRooms(rooms);
 
     console.log(`✅ Xona band qilindi: ${roomId}`);
     res.json({
       message: "Xona muvaffaqiyatli band qilindi!",
-      room: rooms[roomIndex],
+      booking: newBooking, // Faqat bandlikni qaytaramiz
     });
   } catch (err) {
     console.error("❌ Xonani band qilishda xatolik:", err);
@@ -69,30 +88,20 @@ app.post("/book-room", (req, res) => {
   }
 });
 
-// Server xatolarini ushlash
-app.use((err, req, res, next) => {
-  console.error("❌ Server xatosi:", err);
-  res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
-});
-
-app.listen(PORT, () => {
-  console.log(`✅ Server ${PORT} portda ishlayapti...`);
-});
-
-// Bandlikni o‘chirish (roomId va bookingId bo‘yicha)
+// 📌 **Bandlikni o‘chirish (roomId va bookingId bo‘yicha)**
 app.delete("/delete-booking/:roomId/:bookingId", (req, res) => {
   try {
     const { roomId, bookingId } = req.params;
     let rooms = loadRooms();
 
-    const roomIndex = rooms.findIndex((room) => room.id === roomId);
+    const roomIndex = rooms.findIndex((room) => String(room.id) === String(roomId));
     if (roomIndex === -1) {
       return res.status(404).json({ message: "Xona topilmadi" });
     }
 
     const initialLength = rooms[roomIndex].booked.length;
     rooms[roomIndex].booked = rooms[roomIndex].booked.filter(
-      (b) => b.id !== bookingId
+      (b) => String(b.id) !== String(bookingId)
     );
 
     if (rooms[roomIndex].booked.length === initialLength) {
@@ -100,7 +109,7 @@ app.delete("/delete-booking/:roomId/:bookingId", (req, res) => {
     }
 
     // Yangilangan ma'lumotni JSON faylga yozish
-    fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
+    saveRooms(rooms);
 
     console.log(`✅ Bandlik (${bookingId}) o‘chirildi`);
     res.json({ message: "Bandlik muvaffaqiyatli o‘chirildi!" });
@@ -108,4 +117,15 @@ app.delete("/delete-booking/:roomId/:bookingId", (req, res) => {
     console.error("❌ Xatolik:", err);
     res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
   }
+});
+
+// 📌 **Server xatolarini ushlash**
+app.use((err, req, res, next) => {
+  console.error("❌ Server xatosi:", err);
+  res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
+});
+
+// 📌 **Serverni ishga tushirish**
+app.listen(PORT, () => {
+  console.log(`✅ Server ${PORT} portda ishlayapti...`);
 });

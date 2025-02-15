@@ -13,18 +13,18 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleDeleteBooking = (roomId, bookingId) => {
+    if (!bookingId) {
+      alert("Xatolik: bookingId topilmadi!");
+      return;
+    }
+  
     axios
-      .delete(
-        `https://muxtasham2-2.onrender.com/delete-booking/${roomId}/${bookingId}`
-      )
+      .delete(`https://muxtasham2-2.onrender.com/delete-booking/${roomId}/${bookingId}`)
       .then(() => {
         setRooms((prevRooms) =>
           prevRooms.map((room) =>
             room.id === roomId
-              ? {
-                  ...room,
-                  booked: room.booked.filter((b) => b.id !== bookingId),
-                }
+              ? { ...room, booked: room.booked.filter((b) => b.id !== bookingId) }
               : room
           )
         );
@@ -35,6 +35,7 @@ const Home = () => {
         alert("Xatolik yuz berdi!");
       });
   };
+  
 
   useEffect(() => {
     axios
@@ -288,7 +289,7 @@ const Home = () => {
                     selectedRoom.id,
                     selectedRoom.booked.find(
                       (b) => b.date === date && b.timeSlot === timeSlot
-                    )
+                    )?.id // <-- faqat ID yuboriladi
                   )
                 }
                 className="w-full mt-3 bg-red-500 text-white py-2 rounded-md"
