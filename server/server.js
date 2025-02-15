@@ -59,7 +59,10 @@ app.post("/book-room", (req, res) => {
     fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
 
     console.log(`✅ Xona band qilindi: ${roomId}`);
-    res.json({ message: "Xona muvaffaqiyatli band qilindi!", room: rooms[roomIndex] });
+    res.json({
+      message: "Xona muvaffaqiyatli band qilindi!",
+      room: rooms[roomIndex],
+    });
   } catch (err) {
     console.error("❌ Xonani band qilishda xatolik:", err);
     res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
@@ -74,4 +77,35 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`✅ Server ${PORT} portda ishlayapti...`);
+});
+
+// Bandlikni o‘chirish (roomId va bookingId bo‘yicha)
+app.delete("/delete-booking/:roomId/:bookingId", (req, res) => {
+  try {
+    const { roomId, bookingId } = req.params;
+    let rooms = loadRooms();
+
+    const roomIndex = rooms.findIndex((room) => room.id === roomId);
+    if (roomIndex === -1) {
+      return res.status(404).json({ message: "Xona topilmadi" });
+    }
+
+    const initialLength = rooms[roomIndex].booked.length;
+    rooms[roomIndex].booked = rooms[roomIndex].booked.filter(
+      (b) => b.id !== bookingId
+    );
+
+    if (rooms[roomIndex].booked.length === initialLength) {
+      return res.status(404).json({ message: "Bandlik topilmadi" });
+    }
+
+    // Yangilangan ma'lumotni JSON faylga yozish
+    fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
+
+    console.log(`✅ Bandlik (${bookingId}) o‘chirildi`);
+    res.json({ message: "Bandlik muvaffaqiyatli o‘chirildi!" });
+  } catch (err) {
+    console.error("❌ Xatolik:", err);
+    res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
+  }
 });

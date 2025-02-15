@@ -12,23 +12,26 @@ const Home = () => {
   const [accessCode, setAccessCode] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleDeleteBooking = (roomId, booking) => {
+  const handleDeleteBooking = (roomId, bookingId) => {
     axios
-      .delete(`https://muxtasham2-2.onrender.com/delete-booking/${roomId}`, {
-        data: booking,
-      })
+      .delete(
+        `https://muxtasham2-2.onrender.com/delete-booking/${roomId}/${bookingId}`
+      )
       .then(() => {
         setRooms((prevRooms) =>
           prevRooms.map((room) =>
             room.id === roomId
-              ? { ...room, booked: room.booked.filter((b) => b !== booking) }
+              ? {
+                  ...room,
+                  booked: room.booked.filter((b) => b.id !== bookingId),
+                }
               : room
           )
         );
         alert("Bandlik o‘chirildi!");
       })
       .catch((error) => {
-        console.error(error);
+        console.error("❌ Xatolik:", error);
         alert("Xatolik yuz berdi!");
       });
   };
@@ -111,7 +114,6 @@ const Home = () => {
       </div>
     );
   }
-  
 
   return (
     <div className="p-5 max-w-7xl mx-auto">
