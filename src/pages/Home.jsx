@@ -11,8 +11,12 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal holati
   const [accessCode, setAccessCode] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleDeleteBooking = (roomId, bookingId) => {
+    console.log("🗑 O‘chirish uchun Room ID:", roomId);
+    console.log("🗑 O‘chirish uchun Booking ID:", bookingId);
+
     if (!bookingId || bookingId.trim() === "") {
       alert("Xatolik: bookingId topilmadi!");
       return;
@@ -23,19 +27,8 @@ const Home = () => {
         `https://muxtasham2-2.onrender.com/delete-booking/${roomId}/${bookingId}`
       )
       .then(() => {
-        setRooms((prevRooms) =>
-          prevRooms.map((room) =>
-            room.id === roomId
-              ? {
-                  ...room,
-                  booked: room.booked.filter(
-                    (b) => String(b.id) !== String(bookingId)
-                  ),
-                }
-              : room
-          )
-        );
-        alert("Bandlik o‘chirildi!");
+        fetchRooms(); // 🆕 Xonalarni qayta yuklaymiz
+        alert("✅ Bandlik o‘chirildi!");
       })
       .catch((error) => {
         console.error("❌ Xatolik:", error);
@@ -43,11 +36,37 @@ const Home = () => {
       });
   };
 
-  useEffect(() => {
+  const handleAddRoom = (newRoom) => {
+    axios
+      .post("https://muxtasham2-2.onrender.com/book-room", newRoom)
+      .then((response) => {
+        console.log("✅ Yangi xona qo‘shildi:", response.data);
+
+        // 🔄 State'ni to‘g‘ri yangilash
+        setRooms((prevRooms) => [...prevRooms, response.data.room]);
+      })
+      .catch((error) => {
+        console.error("❌ Xatolik:", error);
+        alert("Xona qo‘shishda xatolik yuz berdi!");
+      });
+  };
+  const fetchRooms = () => {
+    setLoading(true); // 🔄 Yuklanishni boshlash
     axios
       .get("https://muxtasham2-2.onrender.com/rooms")
-      .then((response) => setRooms(response.data))
-      .catch((error) => console.error("Xonalarni yuklashda xatolik:", error));
+      .then((response) => {
+        setRooms(response.data);
+      })
+      .catch((error) => {
+        console.error("❌ Xonalarni yuklashda xatolik:", error);
+      })
+      .finally(() => {
+        setLoading(false); // ✅ Yuklanish tugadi
+      });
+  };
+
+  useEffect(() => {
+    fetchRooms();
   }, []);
 
   const handleBookRoom = () => {
@@ -64,13 +83,7 @@ const Home = () => {
         booking: newBooking,
       })
       .then(() => {
-        setRooms((prevRooms) =>
-          prevRooms.map((room) =>
-            room.id === selectedRoom.id
-              ? { ...room, booked: [...(room.booked || []), newBooking] }
-              : room
-          )
-        );
+        fetchRooms(); // 🆕 Xonalarni qayta yuklaymiz
         setIsModalOpen(false);
         setSelectedRoom(null);
         setName("");
@@ -155,46 +168,48 @@ const Home = () => {
         </label>
       </div>
 
-      {floors.map((floor, index) => (
-        <div key={index} className="mb-6">
-          <h2 className="text-3xl font-bold mb-3">{index + 1}-qavat</h2>
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {floor.map((room) => {
-              const bookedInfo = room.booked?.find(
-                (b) => b.date === date && b.timeSlot === timeSlot
-              );
-              const isBooked = !!bookedInfo;
+      {loading ? (
+        <div className="text-center text-2xl font-bold">⏳ Yuklanmoqda...</div>
+      ) : (
+        floors.map((floor, index) => (
+          <div key={index} className="mb-6">
+            <h2 className="text-3xl font-bold mb-3">{index + 1}-qavat</h2>
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {floor.map((room) => {
+                const bookedInfo = room.booked?.find(
+                  (b) => b.date === date && b.timeSlot === timeSlot
+                );
+                const isBooked = !!bookedInfo;
 
-              return (
-                <li
-                  key={room.id}
-                  className={`p-5 border rounded-2xl shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                    isBooked
-                      ? "bg-red-400 text-white"
-                      : "bg-gray-200 text-gray-900"
-                  }`}
-                  onClick={() => {
-                    setSelectedRoom(room);
-                    setIsModalOpen(true);
-                  }}
-                >
-                  <div className="flex flex-col space-y-2">
-                    <h3 className="text-lg font-bold">{room.name}</h3>
-                    <p className="text-sm">Sig‘imi: {room.capacity} kishi</p>
-
-                    {/* Agar xona band qilingan bo‘lsa, kim band qilganligini ko‘rsatish */}
-                    {isBooked && (
-                      <p className="text-xs bg-white bg-opacity-20 px-2 py-1 rounded-md">
-                        <strong>Band qilgan:</strong> {bookedInfo.name}
-                      </p>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+                return (
+                  <li
+                    key={room.id}
+                    className={`p-5 border rounded-2xl shadow-md cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                      isBooked
+                        ? "bg-red-400 text-white"
+                        : "bg-gray-200 text-gray-900"
+                    }`}
+                    onClick={() => {
+                      setSelectedRoom(room);
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    <div className="flex flex-col space-y-2">
+                      <h3 className="text-lg font-bold">{room.name}</h3>
+                      <p className="text-sm">Sig‘imi: {room.capacity} kishi</p>
+                      {isBooked && (
+                        <p className="text-xs bg-white bg-opacity-20 px-2 py-1 rounded-md">
+                          <strong>Band qilgan:</strong> {bookedInfo.name}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))
+      )}
 
       {/* Modal oynasi */}
       {isModalOpen && selectedRoom && (
