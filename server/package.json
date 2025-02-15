@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "main": "server/server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node server/server.js"
   },
