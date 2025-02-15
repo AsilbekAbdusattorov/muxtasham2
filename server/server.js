@@ -54,7 +54,6 @@ app.post("/book-room", (req, res) => {
 
     const roomIndex = rooms.findIndex((room) => String(room.id) === String(roomId));
     if (roomIndex === -1) {
-      console.error("❌ Xona topilmadi:", roomId);
       return res.status(404).json({ message: "Xona topilmadi" });
     }
 
@@ -62,12 +61,15 @@ app.post("/book-room", (req, res) => {
       rooms[roomIndex].booked = [];
     }
 
-    rooms[roomIndex].booked.push(booking);
+    // Bandlikka ID berish (Yangi ID hozirgi vaqt bilan generatsiya qilinadi)
+    const newBooking = {
+      id: Date.now().toString(), // Unikal ID
+      ...booking,
+    };
 
-    // JSON faylni yangilash
+    rooms[roomIndex].booked.push(newBooking);
     saveRooms(rooms);
 
-    console.log(`✅ Xona band qilindi: ${roomId}`);
     res.json({
       message: "Xona muvaffaqiyatli band qilindi!",
       room: rooms[roomIndex],
@@ -77,6 +79,7 @@ app.post("/book-room", (req, res) => {
     res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
   }
 });
+
 
 // ✅ Bandlikni o‘chirish (roomId va bookingId bo‘yicha)
 app.delete("/delete-booking/:roomId/:bookingId", (req, res) => {
