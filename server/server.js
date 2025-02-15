@@ -1,7 +1,12 @@
-const express = require("express");
-const fs = require("fs");
-const cors = require("cors");
-const path = require("path");
+import express from "express";
+import fs from "fs";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// __dirname ni ES module'da ishlash uchun
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -10,7 +15,7 @@ const ROOMS_FILE = path.join(__dirname, "rooms.json");
 app.use(cors());
 app.use(express.json());
 
-// JSON fayl mavjudligini tekshirish yoki yaratish
+// JSON fayl mavjudligini tekshirish
 if (!fs.existsSync(ROOMS_FILE)) {
   fs.writeFileSync(ROOMS_FILE, JSON.stringify([], null, 2));
 }
@@ -26,15 +31,6 @@ const loadRooms = () => {
   }
 };
 
-// Xonalarni saqlash funksiyasi
-const saveRooms = (rooms) => {
-  try {
-    fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
-  } catch (err) {
-    console.error("❌ Faylni yozishda xatolik:", err);
-  }
-};
-
 // Barcha xonalarni olish
 app.get("/rooms", (req, res) => {
   const rooms = loadRooms();
@@ -44,15 +40,8 @@ app.get("/rooms", (req, res) => {
 // Xona band qilish
 app.post("/book-room", (req, res) => {
   try {
-    console.log("📩 Keldi:", req.body);
     const { roomId, booking } = req.body;
-    
-    if (!roomId || !booking) {
-      return res.status(400).json({ message: "roomId va booking talab qilinadi" });
-    }
-
     let rooms = loadRooms();
-    console.log("🏨 Hozirgi xonalar:", rooms);
 
     const roomIndex = rooms.findIndex((room) => room.id === roomId);
     if (roomIndex === -1) {
@@ -65,11 +54,11 @@ app.post("/book-room", (req, res) => {
     }
 
     rooms[roomIndex].booked.push(booking);
-    console.log(`✅ Yangi band qilingan xona:`, rooms[roomIndex]);
 
-    saveRooms(rooms);
-    
-    console.log("✅ Xona muvaffaqiyatli band qilindi");
+    // JSON faylni yangilash
+    fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
+
+    console.log(`✅ Xona band qilindi: ${roomId}`);
     res.json({ message: "Xona muvaffaqiyatli band qilindi!", room: rooms[roomIndex] });
   } catch (err) {
     console.error("❌ Xonani band qilishda xatolik:", err);
