@@ -12,7 +12,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("https://muhtasham2backend-3.onrender.com/")
+      .get("https://muhtasham2backend-3.onrender.com/rooms")
       .then((response) => setRooms(response.data))
       .catch((error) => console.error("Xonalarni yuklashda xatolik:", error));
   }, []);
