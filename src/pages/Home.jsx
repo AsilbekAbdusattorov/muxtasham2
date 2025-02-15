@@ -12,7 +12,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("https://muhtasham2backend-3.onrender.com/rooms")
+      .get("https://muhtasham2backend-4.onrender.com/rooms")
       .then((response) => setRooms(response.data))
       .catch((error) => console.error("Xonalarni yuklashda xatolik:", error));
   }, []);
@@ -36,7 +36,7 @@ const Home = () => {
     );
 
     axios
-      .post("https://muhtasham2backend-3.onrender.com/book-room", { updatedRooms })
+      .post("https://muhtasham2backend-4.onrender.com/book-room", { updatedRooms })
       .then(() => {
         setRooms(updatedRooms);
         setIsModalOpen(false);
