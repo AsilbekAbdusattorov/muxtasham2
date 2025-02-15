@@ -70,3 +70,43 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`✅ Server ${PORT} portda ishlayapti...`);
 });
+
+
+
+app.post("/book-room", (req, res) => {
+  try {
+    console.log("📩 Keldi:", req.body); // Mijozdan kelayotgan ma'lumotni ko'rish
+
+    const { roomId, booking } = req.body;
+    if (!roomId || !booking) {
+      return res.status(400).json({ message: "roomId va booking talab qilinadi" });
+    }
+
+    let rooms = loadRooms();
+    console.log("🏨 Hozirgi xonalar:", rooms);
+
+    const roomIndex = rooms.findIndex((room) => room.id === roomId);
+    if (roomIndex === -1) {
+      console.error("❌ Xona topilmadi:", roomId);
+      return res.status(404).json({ message: "Xona topilmadi" });
+    }
+
+    if (!Array.isArray(rooms[roomIndex].booked)) {
+      rooms[roomIndex].booked = [];
+    }
+
+    rooms[roomIndex].booked.push(booking);
+
+    console.log(`✅ Yangi band qilingan xona:`, rooms[roomIndex]);
+
+    // JSON faylni yangilash
+    fs.writeFileSync(ROOMS_FILE, JSON.stringify(rooms, null, 2));
+
+    console.log("✅ Xona muvaffaqiyatli band qilindi");
+    res.json({ message: "Xona muvaffaqiyatli band qilindi!", room: rooms[roomIndex] });
+
+  } catch (err) {
+    console.error("❌ Xonani band qilishda xatolik:", err);
+    res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
+  }
+});
