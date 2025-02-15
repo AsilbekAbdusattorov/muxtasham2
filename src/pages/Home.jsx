@@ -36,7 +36,7 @@ const Home = () => {
     );
 
     axios
-      .post("https://muhtasham2backend-3.onrender.com/", { updatedRooms })
+      .post("https://muhtasham2backend-3.onrender.com/book-room", { updatedRooms })
       .then(() => {
         setRooms(updatedRooms);
         setIsModalOpen(false);
