@@ -30,55 +30,55 @@
       "booked": []
     },
     {
-      "id": 10,
+      "id": 6,
       "name": "Xona 10",
       "capacity": 25,
       "booked": []
     },
     {
-      "id": 11,
+      "id": 7,
       "name": "Xona 11",
       "capacity": 25,
       "booked": []
     },
     {
-      "id": 12,
+      "id": 8,
       "name": "Xona 12",
       "capacity": 15,
       "booked": []
     },
     {
-      "id": 13,
+      "id": 9,
       "name": "Xona 13",
       "capacity": 10,
       "booked": []
     },
     {
-      "id": 14,
+      "id": 10,
       "name": "Xona 14",
       "capacity": 15,
       "booked": []
     },
     {
-      "id": 15,
+      "id": 11,
       "name": "Xona 15",
       "capacity": 12,
       "booked": []
     },
     {
-      "id": 15,
+      "id": 12,
       "name": "Xona 17",
       "capacity": 12,
       "booked": []
     },
     {
-      "id": 15,
+      "id": 13,
       "name": "Xona 18",
       "capacity": 15,
       "booked": []
     },
     {
-      "id": 15,
+      "id": 14,
       "name": "Xona 19",
       "capacity": 10,
       "booked": []
@@ -87,6 +87,66 @@
       "id": 15,
       "name": "Xona 20",
       "capacity": 15,
+      "booked": []
+    },
+    {
+      "id": 16,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 17,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 18,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 19,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 20,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 21,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 22,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 23,
+      "name": "Podval so'ri",
+      "capacity": 15,
+      "booked": []
+    },
+    {
+      "id": 24,
+      "name": "Podval so'ri",
+      "capacity": 8,
+      "booked": []
+    },
+    {
+      "id": 25,
+      "name": "Podval so'ri",
+      "capacity": 8,
       "booked": []
     }
   ]
