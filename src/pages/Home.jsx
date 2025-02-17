@@ -103,10 +103,15 @@ const Home = () => {
       !room.booked ||
       !room.booked.some((b) => b.date === date && b.timeSlot === timeSlot)
   );
-
   const floors = [];
-  for (let i = 0; i < rooms.length; i += 5) {
-    floors.push(rooms.slice(i, i + 5));
+  let floorRoomCount = [5, 10, 10]; // 2-chi qavatda 5 ta xona, 3-chi qavatda 10 ta xona, Padvalda 10 ta xona
+  let roomIndex = 0;
+  
+  // Har bir qavat uchun xonalarni ajratib olish
+  for (let i = 0; i < floorRoomCount.length; i++) {
+    const roomCount = floorRoomCount[i];
+    floors.push(rooms.slice(roomIndex, roomIndex + roomCount));
+    roomIndex += roomCount; // Keyingi qavat uchun indeksni yangilash
   }
   if (!isAuthenticated) {
     return (
@@ -146,7 +151,7 @@ const Home = () => {
   }
 
   return (
-    <section className="bg-gradient-to-b from-blue-100 to-blue-50"> 
+    <section className="bg-gradient-to-b from-blue-100 to-blue-50">
       <div className="p-5 max-w-7xl mx-auto min-h-screen">
         <h1 className="text-5xl text-center font-bold mb-10 text-blue-800 drop-shadow-lg">
           Xonalar ro‘yxati
@@ -211,23 +216,16 @@ const Home = () => {
   </div>
 ) : (
   floors.map((floor, index) => {
-    // Check if it's the 3rd floor or above
-    const isPadval = index >= 2; // 3rd floor (index 2) and above are "Padval"
-    
-    // If it's the first "Padval", render it, otherwise don't display
-    if (isPadval && index > 2) return null; // Hide subsequent "Padval"
-
-    // If it's the 3rd floor or above, combine all rooms into one "Padval" section
-    const roomsToShow = isPadval ? floors.slice(2).flat() : floor;
+    const isPadval = index === 2; // Padval faqat 3-chi qavatda (index 2)
 
     return (
       <div key={index} className="mb-10">
         <h2 className="text-3xl font-bold mb-5 text-blue-700">
-          {isPadval && index === 2 ? "Padval" : `${index + 2}-qavat`}
+          {isPadval ? "Padval" : `${index + 2}-qavat`}
         </h2>
-        {/* Render rooms */}
+        {/* Xonalarni chiqarish */}
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {roomsToShow.map((room) => {
+          {floor.map((room) => {
             const bookedInfo = room.booked?.find(
               (b) => b.date === date && b.timeSlot === timeSlot
             );
@@ -265,7 +263,6 @@ const Home = () => {
     );
   })
 )}
-
 
         {/* Modal oynasi */}
         {isModalOpen && selectedRoom && (

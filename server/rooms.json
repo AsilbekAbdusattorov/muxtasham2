@@ -1,152 +1,177 @@
 [
-    {
-      "id": 1,
-      "name": "Xona 1",
-      "capacity": 20,
-      "booked": []
-    },
-    {
-      "id": 2,
-      "name": "Xona 2",
-      "capacity": 18,
-      "booked": []
-    },
-    {
-      "id": 3,
-      "name": "Xona 3",
-      "capacity": 18,
-      "booked": []
-    },
-    {
-      "id": 4,
-      "name": "Xona 4",
-      "capacity": 15,
-      "booked": []
-    },
-    {
-      "id": 5,
-      "name": "Xona 5",
-      "capacity": 25,
-      "booked": []
-    },
-    {
-      "id": 6,
-      "name": "Xona 10",
-      "capacity": 25,
-      "booked": []
-    },
-    {
-      "id": 7,
-      "name": "Xona 11",
-      "capacity": 25,
-      "booked": []
-    },
-    {
-      "id": 8,
-      "name": "Xona 12",
-      "capacity": 15,
-      "booked": []
-    },
-    {
-      "id": 9,
-      "name": "Xona 13",
-      "capacity": 10,
-      "booked": []
-    },
-    {
-      "id": 10,
-      "name": "Xona 14",
-      "capacity": 15,
-      "booked": []
-    },
-    {
-      "id": 11,
-      "name": "Xona 15",
-      "capacity": 12,
-      "booked": []
-    },
-    {
-      "id": 12,
-      "name": "Xona 17",
-      "capacity": 12,
-      "booked": []
-    },
-    {
-      "id": 13,
-      "name": "Xona 18",
-      "capacity": 15,
-      "booked": []
-    },
-    {
-      "id": 14,
-      "name": "Xona 19",
-      "capacity": 10,
-      "booked": []
-    },
-    {
-      "id": 15,
-      "name": "Xona 20",
-      "capacity": 15,
-      "booked": []
-    },
-    {
-      "id": 16,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 17,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 18,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 19,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 20,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 21,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 22,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 23,
-      "name": "Podval so'ri",
-      "capacity": 15,
-      "booked": []
-    },
-    {
-      "id": 24,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    },
-    {
-      "id": 25,
-      "name": "Podval so'ri",
-      "capacity": 8,
-      "booked": []
-    }
-  ]
+  {
+    "id": 1,
+    "name": "Xona 1",
+    "capacity": 20,
+    "booked": [],
+    "floor": "1"
+  },
+  {
+    "id": 2,
+    "name": "Xona 2",
+    "capacity": 18,
+    "booked": [],
+    "floor": "1"
+  },
+  {
+    "id": 3,
+    "name": "Xona 3",
+    "capacity": 18,
+    "booked": [],
+    "floor": "1"
+  },
+  {
+    "id": 4,
+    "name": "Xona 4",
+    "capacity": 15,
+    "booked": [],
+    "floor": "1"
+  },
+  {
+    "id": 5,
+    "name": "Xona 5",
+    "capacity": 25,
+    "booked": [],
+    "floor": "1"
+  },
+  {
+    "id": 6,
+    "name": "Xona 10",
+    "capacity": 25,
+    "booked": [],
+    "floor": "2"
+  },
+  {
+    "id": 7,
+    "name": "Xona 11",
+    "capacity": 25,
+    "booked": [],
+    "floor": "2"
+  },
+  {
+    "id": 8,
+    "name": "Xona 12",
+    "capacity": 15,
+    "booked": [],
+    "floor": "2"
+  },
+  {
+    "id": 9,
+    "name": "Xona 13",
+    "capacity": 10,
+    "booked": [],
+    "floor": "2"
+  },
+  {
+    "id": 10,
+    "name": "Xona 14",
+    "capacity": 15,
+    "booked": [],
+    "floor": "2"
+  },
+  {
+    "id": 11,
+    "name": "Xona 15",
+    "capacity": 12,
+    "booked": [],
+    "floor": "3"
+  },
+  {
+    "id": 12,
+    "name": "Xona 17",
+    "capacity": 12,
+    "booked": [],
+    "floor": "3"
+  },
+  {
+    "id": 13,
+    "name": "Xona 18",
+    "capacity": 15,
+    "booked": [],
+    "floor": "3"
+  },
+  {
+    "id": 14,
+    "name": "Xona 19",
+    "capacity": 10,
+    "booked": [],
+    "floor": "3"
+  },
+  {
+    "id": 15,
+    "name": "Xona 20",
+    "capacity": 15,
+    "booked": [],
+    "floor": "3"
+  },
+  {
+    "id": 16,
+    "name": "Podval so'ri 1",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 17,
+    "name": "Podval so'ri 2",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 18,
+    "name": "Podval so'ri 3",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 19,
+    "name": "Podval so'ri 4",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 20,
+    "name": "Podval so'ri 5",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 21,
+    "name": "Podval so'ri 6",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 22,
+    "name": "Podval so'ri 7",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 23,
+    "name": "Podval so'ri 8",
+    "capacity": 15,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 24,
+    "name": "Podval so'ri 9",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  },
+  {
+    "id": 25,
+    "name": "Podval so'ri 10",
+    "capacity": 8,
+    "booked": [],
+    "floor": "padval"
+  }
+]
