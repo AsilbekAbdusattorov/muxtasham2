@@ -126,7 +126,7 @@ const Home = () => {
             value={accessCode}
             onChange={(e) => setAccessCode(e.target.value)}
             className={`w-full p-3 border-2 rounded-md text-center text-xl transition-all ${
-              accessCode && accessCode !== "123456"
+              accessCode && accessCode !== "654321"
                 ? "border-red-500 focus:border-red-700"
                 : "border-gray-300 focus:border-blue-500"
             }`}
@@ -135,7 +135,7 @@ const Home = () => {
 
           <button
             onClick={() => {
-              if (accessCode === "123456") {
+              if (accessCode === "654321") {
                 setIsAuthenticated(true);
               } else {
                 alert("❌ Noto‘g‘ri kod!");
