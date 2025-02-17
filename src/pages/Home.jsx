@@ -144,9 +144,9 @@ const Home = () => {
       </div>
     );
   }
-
+  const reorderedFloors = [...floors.slice(1), floors[0]];
   return (
-    <section className="bg-gradient-to-b from-blue-100 to-blue-50"> 
+    <section className="bg-gradient-to-b from-blue-100 to-blue-50">
       <div className="p-5 max-w-7xl mx-auto min-h-screen">
         <h1 className="text-5xl text-center font-bold mb-10 text-blue-800 drop-shadow-lg">
           Xonalar ro‘yxati
@@ -210,10 +210,12 @@ const Home = () => {
             ⏳ Yuklanmoqda...
           </div>
         ) : (
-          floors.map((floor, index) => (
+          reorderedFloors.map((floor, index) => (
             <div key={index} className="mb-10">
               <h2 className="text-3xl font-bold mb-5 text-blue-700">
-                {index + 1}-qavat
+                {index === reorderedFloors.length - 1
+                  ? "Podval"
+                  : `${index + 2}-qavat`}
               </h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {floor.map((room) => {
