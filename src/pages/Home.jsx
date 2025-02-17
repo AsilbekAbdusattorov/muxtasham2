@@ -106,7 +106,7 @@ const Home = () => {
   const floors = [];
   let floorRoomCount = [5, 10, 10]; // 2-chi qavatda 5 ta xona, 3-chi qavatda 10 ta xona, Padvalda 10 ta xona
   let roomIndex = 0;
-  
+
   // Har bir qavat uchun xonalarni ajratib olish
   for (let i = 0; i < floorRoomCount.length; i++) {
     const roomCount = floorRoomCount[i];
@@ -211,58 +211,58 @@ const Home = () => {
         </div>
 
         {loading ? (
-  <div className="text-center text-2xl font-bold animate-pulse text-blue-600">
-    ⏳ Yuklanmoqda...
-  </div>
-) : (
-  floors.map((floor, index) => {
-    const isPadval = index === 2; // Padval faqat 3-chi qavatda (index 2)
-
-    return (
-      <div key={index} className="mb-10">
-        <h2 className="text-3xl font-bold mb-5 text-blue-700">
-          {isPadval ? "Padval" : `${index + 2}-qavat`}
-        </h2>
-        {/* Xonalarni chiqarish */}
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {floor.map((room) => {
-            const bookedInfo = room.booked?.find(
-              (b) => b.date === date && b.timeSlot === timeSlot
-            );
-            const isBooked = !!bookedInfo;
+          <div className="text-center text-2xl font-bold animate-pulse text-blue-600">
+            ⏳ Yuklanmoqda...
+          </div>
+        ) : (
+          floors.map((floor, index) => {
+            const isPadval = index === 2; // Padval faqat 3-chi qavatda (index 2)
 
             return (
-              <li
-                key={room.id}
-                className={`p-6 border rounded-2xl shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                  isBooked
-                    ? "bg-red-500 text-white shadow-red-400"
-                    : "bg-white text-gray-900 border-gray-300 hover:border-blue-500"
-                }`}
-                onClick={() => {
-                  setSelectedRoom(room);
-                  setIsModalOpen(true);
-                }}
-              >
-                <div className="flex flex-col space-y-3">
-                  <h3 className="text-xl font-bold">{room.name}</h3>
-                  <p className="text-sm text-gray-700">
-                    🏠 Sig‘imi: <strong>{room.capacity} kishi</strong>
-                  </p>
-                  {isBooked && (
-                    <p className="text-sm bg-white bg-opacity-25 px-3 py-2 rounded-lg shadow-md">
-                      🔒 <strong>Band qilgan:</strong> {bookedInfo.name}
-                    </p>
-                  )}
-                </div>
-              </li>
+              <div key={index} className="mb-10">
+                <h2 className="text-3xl font-bold mb-5 text-blue-700">
+                  {isPadval ? "Padval" : `${index + 2}-qavat`}
+                </h2>
+                {/* Xonalarni chiqarish */}
+                <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {floor.map((room) => {
+                    const bookedInfo = room.booked?.find(
+                      (b) => b.date === date && b.timeSlot === timeSlot
+                    );
+                    const isBooked = !!bookedInfo;
+
+                    return (
+                      <li
+                        key={room.id}
+                        className={`p-6 border rounded-2xl shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                          isBooked
+                            ? "bg-red-500 text-white shadow-red-400"
+                            : "bg-white text-gray-900 border-gray-300 hover:border-blue-500"
+                        }`}
+                        onClick={() => {
+                          setSelectedRoom(room);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        <div className="flex flex-col space-y-3">
+                          <h3 className="text-xl font-bold">{room.name}</h3>
+                          <p className="text-sm text-gray-700">
+                            🏠 Sig‘imi: <strong>{room.capacity} kishi</strong>
+                          </p>
+                          {isBooked && (
+                            <p className="text-sm bg-white bg-opacity-25 px-3 py-2 rounded-lg shadow-md">
+                              🔒 <strong>Band qilgan:</strong> {bookedInfo.name}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             );
-          })}
-        </ul>
-      </div>
-    );
-  })
-)}
+          })
+        )}
 
         {/* Modal oynasi */}
         {isModalOpen && selectedRoom && (
