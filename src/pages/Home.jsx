@@ -144,9 +144,9 @@ const Home = () => {
       </div>
     );
   }
-  const reorderedFloors = [...floors.slice(1), floors[0]];
+
   return (
-    <section className="bg-gradient-to-b from-blue-100 to-blue-50">
+    <section className="bg-gradient-to-b from-blue-100 to-blue-50"> 
       <div className="p-5 max-w-7xl mx-auto min-h-screen">
         <h1 className="text-5xl text-center font-bold mb-10 text-blue-800 drop-shadow-lg">
           Xonalar ro‘yxati
@@ -206,55 +206,66 @@ const Home = () => {
         </div>
 
         {loading ? (
-          <div className="text-center text-2xl font-bold animate-pulse text-blue-600">
-            ⏳ Yuklanmoqda...
-          </div>
-        ) : (
-          reorderedFloors.map((floor, index) => (
-            <div key={index} className="mb-10">
-              <h2 className="text-3xl font-bold mb-5 text-blue-700">
-                {index === reorderedFloors.length - 1
-                  ? "Podval"
-                  : `${index + 2}-qavat`}
-              </h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {floor.map((room) => {
-                  const bookedInfo = room.booked?.find(
-                    (b) => b.date === date && b.timeSlot === timeSlot
-                  );
-                  const isBooked = !!bookedInfo;
+  <div className="text-center text-2xl font-bold animate-pulse text-blue-600">
+    ⏳ Yuklanmoqda...
+  </div>
+) : (
+  floors.map((floor, index) => {
+    // Check if it's the 3rd floor or above
+    const isPadval = index >= 2; // 3rd floor (index 2) and above are "Padval"
+    
+    // If it's the first "Padval", render it, otherwise don't display
+    if (isPadval && index > 2) return null; // Hide subsequent "Padval"
 
-                  return (
-                    <li
-                      key={room.id}
-                      className={`p-6 border rounded-2xl shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                        isBooked
-                          ? "bg-red-500 text-white shadow-red-400"
-                          : "bg-white text-gray-900 border-gray-300 hover:border-blue-500"
-                      }`}
-                      onClick={() => {
-                        setSelectedRoom(room);
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      <div className="flex flex-col space-y-3">
-                        <h3 className="text-xl font-bold">{room.name}</h3>
-                        <p className="text-sm text-gray-700">
-                          🏠 Sig‘imi: <strong>{room.capacity} kishi</strong>
-                        </p>
-                        {isBooked && (
-                          <p className="text-sm bg-white bg-opacity-25 px-3 py-2 rounded-lg shadow-md">
-                            🔒 <strong>Band qilgan:</strong> {bookedInfo.name}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))
-        )}
+    // If it's the 3rd floor or above, combine all rooms into one "Padval" section
+    const roomsToShow = isPadval ? floors.slice(2).flat() : floor;
+
+    return (
+      <div key={index} className="mb-10">
+        <h2 className="text-3xl font-bold mb-5 text-blue-700">
+          {isPadval && index === 2 ? "Padval" : `${index + 2}-qavat`}
+        </h2>
+        {/* Render rooms */}
+        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {roomsToShow.map((room) => {
+            const bookedInfo = room.booked?.find(
+              (b) => b.date === date && b.timeSlot === timeSlot
+            );
+            const isBooked = !!bookedInfo;
+
+            return (
+              <li
+                key={room.id}
+                className={`p-6 border rounded-2xl shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                  isBooked
+                    ? "bg-red-500 text-white shadow-red-400"
+                    : "bg-white text-gray-900 border-gray-300 hover:border-blue-500"
+                }`}
+                onClick={() => {
+                  setSelectedRoom(room);
+                  setIsModalOpen(true);
+                }}
+              >
+                <div className="flex flex-col space-y-3">
+                  <h3 className="text-xl font-bold">{room.name}</h3>
+                  <p className="text-sm text-gray-700">
+                    🏠 Sig‘imi: <strong>{room.capacity} kishi</strong>
+                  </p>
+                  {isBooked && (
+                    <p className="text-sm bg-white bg-opacity-25 px-3 py-2 rounded-lg shadow-md">
+                      🔒 <strong>Band qilgan:</strong> {bookedInfo.name}
+                    </p>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  })
+)}
+
 
         {/* Modal oynasi */}
         {isModalOpen && selectedRoom && (
