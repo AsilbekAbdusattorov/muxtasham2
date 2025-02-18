@@ -154,7 +154,7 @@ const Home = () => {
     <section className="bg-gradient-to-b from-blue-100 to-blue-50">
       <div className="p-5 max-w-7xl mx-auto min-h-screen">
         <h1 className="text-5xl text-center font-bold mb-10 text-blue-800 drop-shadow-lg">
-          Xonalar ro‘yxati
+          Muhtasham xonalari
         </h1>
 
         <input
