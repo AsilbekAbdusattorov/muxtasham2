@@ -70,12 +70,17 @@ const Home = () => {
   }, []);
 
   const handleBookRoom = () => {
-    if (!selectedRoom || !name.trim() || !phone.trim() || !date) {
-      alert("Iltimos, barcha maydonlarni to‘ldiring!");
+    if (!selectedRoom || !name.trim() || !date) {
+      alert("Iltimos, ism va sana maydonlarini to‘ldiring!");
       return;
     }
 
-    const newBooking = { name, phone, date, timeSlot };
+    const newBooking = {
+      name,
+      phone: phone.trim() || "Telefon kiritilmagan", // Agar bo‘sh bo‘lsa, "Telefon kiritilmagan" deb yozamiz
+      date,
+      timeSlot,
+    };
 
     axios
       .post("https://muxtasham2-2.onrender.com/book-room", {
@@ -87,7 +92,7 @@ const Home = () => {
         setIsModalOpen(false);
         setSelectedRoom(null);
         setName("");
-        setPhone("");
+        setPhone(""); // Telefon bo‘sh stringga qaytariladi
         setDate(new Date().toISOString().split("T")[0]);
         setTimeSlot("kunduzgi");
         alert("Xona muvaffaqiyatli band qilindi!");
@@ -308,11 +313,12 @@ const Home = () => {
                 placeholder="Ism va familiya"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                required
                 className="w-full p-3 border rounded-md mb-3 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none"
               />
               <input
                 type="tel"
-                placeholder="Telefon raqami"
+                placeholder="Telefon raqami (ixtiyoriy)"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full p-3 border rounded-md mb-3 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none"
@@ -321,6 +327,7 @@ const Home = () => {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                required
                 className="w-full p-3 border rounded-md mb-3 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none"
               />
 
