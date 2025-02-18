@@ -92,7 +92,7 @@ const Home = () => {
         setIsModalOpen(false);
         setSelectedRoom(null);
         setName("");
-        setPhone(""); // Telefon bo‘sh stringga qaytariladi
+        setPhone("");
         setDate(new Date().toISOString().split("T")[0]);
         setTimeSlot("kunduzgi");
         alert("Xona muvaffaqiyatli band qilindi!");
