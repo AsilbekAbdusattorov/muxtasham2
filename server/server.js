@@ -17,7 +17,7 @@ if (!process.env.MONGO_URI) {
 
 const MONGO_URI = process.env.MONGO_URI;
 
-// MongoDB-ga ulanish
+// ✅ MongoDB-ga ulanish
 mongoose
   .connect(MONGO_URI, {
     useNewUrlParser: true,
