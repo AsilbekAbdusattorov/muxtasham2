@@ -13,21 +13,17 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Bandlikni o'chirish
   const handleDeleteBooking = (roomId, bookingId) => {
-    console.log("🗑 O‘chirish uchun Room ID:", roomId);
-    console.log("🗑 O‘chirish uchun Booking ID:", bookingId);
-
     if (!bookingId || bookingId.trim() === "") {
       alert("Xatolik: bookingId topilmadi!");
       return;
     }
 
     axios
-      .delete(
-        `https://muxtasham2-2.onrender.com/delete-booking/${roomId}/${bookingId}`
-      )
+      .delete(`https://muxtasham2-2.onrender.com/delete-booking/${roomId}/${bookingId}`)
       .then(() => {
-        fetchRooms(); // 🆕 Xonalarni qayta yuklaymiz
+        fetchRooms(); // Xonalarni qayta yuklash
         alert("✅ Bandlik o‘chirildi!");
       })
       .catch((error) => {
@@ -36,6 +32,7 @@ const Home = () => {
       });
   };
 
+  // Xonani band qilish
   const handleBookRoom = () => {
     if (!selectedRoom || !name.trim() || !date) {
       alert("Iltimos, ism va sana maydonlarini to‘ldiring!");
@@ -54,7 +51,7 @@ const Home = () => {
         ...newBooking,
       })
       .then(() => {
-        fetchRooms(); // 🆕 Xonalarni qayta yuklaymiz
+        fetchRooms(); // Xonalarni qayta yuklash
         setIsModalOpen(false);
         setSelectedRoom(null);
         setName("");
@@ -69,19 +66,19 @@ const Home = () => {
       });
   };
 
+  // Xonalarni yuklash
   const fetchRooms = () => {
-    setLoading(true); // 🔄 Yuklanishni boshlash
+    setLoading(true); // Yuklanishni boshlash
     axios
       .get("https://muxtasham2-2.onrender.com/rooms")
       .then((response) => {
-        console.log("Xonalar:", response.data); // Konsolda ma'lumotlarni ko'rish
         setRooms(response.data); // Xonalarni yangilash
       })
       .catch((error) => {
         console.error("❌ Xonalarni yuklashda xatolik:", error);
       })
       .finally(() => {
-        setLoading(false); // ✅ Yuklanish tugadi
+        setLoading(false); // Yuklanish tugadi
       });
   };
 
@@ -89,24 +86,24 @@ const Home = () => {
     fetchRooms();
   }, []);
 
+  // Qavatlar va xonalarni ajratish
   const floors = [];
   let floorRoomCount = [5, 10, 10]; // 2-chi qavatda 5 ta xona, 3-chi qavatda 10 ta xona, Padvalda 10 ta xona
   let roomIndex = 0;
 
-  // Har bir qavat uchun xonalarni ajratib olish
   for (let i = 0; i < floorRoomCount.length; i++) {
     const roomCount = floorRoomCount[i];
     floors.push(rooms.slice(roomIndex, roomIndex + roomCount));
     roomIndex += roomCount; // Keyingi qavat uchun indeksni yangilash
   }
 
+  // Kirish kodi tekshirish
   if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900">
         <div className="bg-white p-8 rounded-2xl shadow-lg max-w-sm w-full text-center">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Kirish</h2>
           <p className="text-gray-500 mb-6">Iltimos, kirish kodini kiriting</p>
-
           <input
             type="text"
             maxLength="6"
@@ -119,7 +116,6 @@ const Home = () => {
             }`}
             placeholder="****"
           />
-
           <button
             onClick={() => {
               if (accessCode === "0021") {
@@ -210,17 +206,17 @@ const Home = () => {
                 <h2 className="text-3xl font-bold mb-5 text-blue-700">
                   {isPadval ? "Padval" : `${index + 2}-qavat`}
                 </h2>
-                {/* Xonalarni chiqarish */}
                 <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {floor.map((room) => {
-                    const bookedInfo = room.booked?.find(
-                      (b) => b.date === date && b.timeSlot === timeSlot
-                    );
+                    const bookedInfo = room.booked?.find((b) => {
+                      const checkInDate = new Date(b.checkIn).toISOString().split("T")[0];
+                      return checkInDate === date;
+                    });
                     const isBooked = !!bookedInfo;
 
                     return (
                       <li
-                        key={room.id}
+                        key={room._id}
                         className={`p-6 border rounded-2xl shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                           isBooked
                             ? "bg-red-500 text-white shadow-red-400"
@@ -238,8 +234,7 @@ const Home = () => {
                           </p>
                           {isBooked && (
                             <p className="text-sm bg-white bg-opacity-25 px-3 py-2 rounded-lg shadow-md">
-                              🔒 <strong>Band qilgan:</strong>{" "}
-                              {bookedInfo.guestName}
+                              🔒 <strong>Band qilgan:</strong> {bookedInfo.guestName}
                             </p>
                           )}
                         </div>
@@ -267,24 +262,18 @@ const Home = () => {
               </h2>
 
               {/* Band qilingan bo'lsa, foydalanuvchi ma'lumotlarini ko‘rsatish */}
-              {selectedRoom.booked?.some(
-                (b) => b.date === date && b.timeSlot === timeSlot
-              ) && (
+              {selectedRoom.booked?.some((b) => {
+                const checkInDate = new Date(b.checkIn).toISOString().split("T")[0];
+                return checkInDate === date;
+              }) && (
                 <div className="bg-yellow-100 p-3 rounded-lg shadow-sm mb-4">
                   <p className="text-sm text-gray-800 font-medium">
                     📌 <strong>Band qilgan:</strong>{" "}
                     {
-                      selectedRoom.booked.find(
-                        (b) => b.date === date && b.timeSlot === timeSlot
-                      ).guestName
-                    }
-                  </p>
-                  <p className="text-sm text-gray-800 font-medium">
-                    📞 <strong>Telefon:</strong>{" "}
-                    {
-                      selectedRoom.booked.find(
-                        (b) => b.date === date && b.timeSlot === timeSlot
-                      ).phone
+                      selectedRoom.booked.find((b) => {
+                        const checkInDate = new Date(b.checkIn).toISOString().split("T")[0];
+                        return checkInDate === date;
+                      }).guestName
                     }
                   </p>
                 </div>
@@ -314,30 +303,6 @@ const Home = () => {
                 className="w-full p-3 border rounded-md mb-3 shadow-sm focus:ring-2 focus:ring-blue-400 outline-none"
               />
 
-              {/* Kunduzgi / Kechgi tanlash */}
-              <div className="flex justify-between mb-4">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    value="kunduzgi"
-                    checked={timeSlot === "kunduzgi"}
-                    onChange={() => setTimeSlot("kunduzgi")}
-                    className="mr-2 w-5 h-5"
-                  />
-                  🌞 Kunduzgi
-                </label>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    value="kechgi"
-                    checked={timeSlot === "kechgi"}
-                    onChange={() => setTimeSlot("kechgi")}
-                    className="mr-2 w-5 h-5"
-                  />
-                  🌙 Kechgi
-                </label>
-              </div>
-
               {/* Tasdiqlash tugmasi */}
               <button
                 onClick={handleBookRoom}
@@ -347,16 +312,18 @@ const Home = () => {
               </button>
 
               {/* Bandlikni o‘chirish tugmasi */}
-              {selectedRoom.booked?.some(
-                (b) => b.date === date && b.timeSlot === timeSlot
-              ) && (
+              {selectedRoom.booked?.some((b) => {
+                const checkInDate = new Date(b.checkIn).toISOString().split("T")[0];
+                return checkInDate === date;
+              }) && (
                 <button
                   onClick={() =>
                     handleDeleteBooking(
-                      selectedRoom.id,
-                      selectedRoom.booked.find(
-                        (b) => b.date === date && b.timeSlot === timeSlot
-                      )?._id
+                      selectedRoom._id,
+                      selectedRoom.booked.find((b) => {
+                        const checkInDate = new Date(b.checkIn).toISOString().split("T")[0];
+                        return checkInDate === date;
+                      })._id
                     )
                   }
                   className="w-full mt-3 bg-red-500 text-white py-3 rounded-md shadow-md hover:bg-red-600 transition"
