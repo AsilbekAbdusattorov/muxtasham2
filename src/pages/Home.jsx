@@ -41,13 +41,13 @@ const Home = () => {
       alert("Iltimos, ism va sana maydonlarini to‘ldiring!");
       return;
     }
-  
+
     const newBooking = {
       guestName: name,
       checkIn: new Date(`${date}T10:00:00Z`), // ISO formatda sanani yuborish
       checkOut: new Date(`${date}T18:00:00Z`), // ISO formatda sanani yuborish
     };
-  
+
     axios
       .post("https://muxtasham2-2.onrender.com/book-room", {
         roomId: selectedRoom._id, // MongoDB ObjectId
@@ -89,11 +89,6 @@ const Home = () => {
     fetchRooms();
   }, []);
 
-  const availableRooms = rooms.filter(
-    (room) =>
-      !room.booked ||
-      !room.booked.some((b) => b.date === date && b.timeSlot === timeSlot)
-  );
   const floors = [];
   let floorRoomCount = [5, 10, 10]; // 2-chi qavatda 5 ta xona, 3-chi qavatda 10 ta xona, Padvalda 10 ta xona
   let roomIndex = 0;
@@ -243,7 +238,8 @@ const Home = () => {
                           </p>
                           {isBooked && (
                             <p className="text-sm bg-white bg-opacity-25 px-3 py-2 rounded-lg shadow-md">
-                              🔒 <strong>Band qilgan:</strong> {bookedInfo.name}
+                              🔒 <strong>Band qilgan:</strong>{" "}
+                              {bookedInfo.guestName}
                             </p>
                           )}
                         </div>
@@ -280,7 +276,7 @@ const Home = () => {
                     {
                       selectedRoom.booked.find(
                         (b) => b.date === date && b.timeSlot === timeSlot
-                      ).name
+                      ).guestName
                     }
                   </p>
                   <p className="text-sm text-gray-800 font-medium">
@@ -360,7 +356,7 @@ const Home = () => {
                       selectedRoom.id,
                       selectedRoom.booked.find(
                         (b) => b.date === date && b.timeSlot === timeSlot
-                      )?.id
+                      )?._id
                     )
                   }
                   className="w-full mt-3 bg-red-500 text-white py-3 rounded-md shadow-md hover:bg-red-600 transition"
