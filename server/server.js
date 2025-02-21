@@ -9,22 +9,23 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🔍 MongoDB ulanishi uchun muhim tekshiruv
-if (!process.env.MONGO_URI) {
+// 🔍 MongoDB ulanishi uchun tekshiruv
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
   console.error("❌ MONGO_URI .env faylda mavjud emas!");
-  process.exit(1); // Serverni to‘xtatish
+  process.exit(1);
 }
 
-const MONGO_URI = process.env.MONGO_URI;
+// ✅ MongoDB-ga ulanish
 mongoose
   .connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("✅ MongoDB ga ulanish muvaffaqiyatli amalga oshirildi"))
+  .then(() => console.log("✅ MongoDB muvaffaqiyatli ulandi!"))
   .catch((err) => {
-    console.error("❌ MongoDB ga ulanishda xatolik:", err);
-    process.exit(1); // Ulana olmasa, serverni to‘xtatish
+    console.error("❌ MongoDB ulanishida xatolik:", err.message);
+    process.exit(1);
   });
 
 // 🔥 Modellar
