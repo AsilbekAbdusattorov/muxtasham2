@@ -41,13 +41,13 @@ const Home = () => {
       alert("Iltimos, ism va sana maydonlarini to‘ldiring!");
       return;
     }
-
+  
     const newBooking = {
       guestName: name,
       checkIn: new Date(`${date}T10:00:00Z`), // ISO formatda sanani yuborish
       checkOut: new Date(`${date}T18:00:00Z`), // ISO formatda sanani yuborish
     };
-
+  
     axios
       .post("https://muxtasham2-2.onrender.com/book-room", {
         roomId: selectedRoom._id, // MongoDB ObjectId
@@ -74,7 +74,8 @@ const Home = () => {
     axios
       .get("https://muxtasham2-2.onrender.com/rooms")
       .then((response) => {
-        setRooms(response.data);
+        console.log("Xonalar:", response.data); // Konsolda ma'lumotlarni ko'rish
+        setRooms(response.data); // Xonalarni yangilash
       })
       .catch((error) => {
         console.error("❌ Xonalarni yuklashda xatolik:", error);
