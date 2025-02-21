@@ -116,5 +116,5 @@ app.use((err, req, res, next) => {
 
 // ✅ Serverni ishga tushirish
 app.listen(PORT, () => {
-  console.log(`✅ Server ${PORT} portda ishlayapti..`);
+  console.log(`✅ Server ${PORT} portda ishlayapti...`);
 });
