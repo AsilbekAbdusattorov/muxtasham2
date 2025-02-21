@@ -36,18 +36,36 @@ const Home = () => {
       });
   };
 
-  const handleAddRoom = (newRoom) => {
+  const handleBookRoom = () => {
+    if (!selectedRoom || !name.trim() || !date) {
+      alert("Iltimos, ism va sana maydonlarini to‘ldiring!");
+      return;
+    }
+  
+    const newBooking = {
+      guestName: name,
+      checkIn: new Date(`${date}T10:00:00Z`), // ISO formatda sanani yuborish
+      checkOut: new Date(`${date}T18:00:00Z`), // ISO formatda sanani yuborish
+    };
+  
     axios
-      .post("https://muxtasham2-2.onrender.com/book-room", newRoom)
-      .then((response) => {
-        console.log("✅ Yangi xona qo‘shildi:", response.data);
-
-        // 🔄 State'ni to‘g‘ri yangilash
-        setRooms((prevRooms) => [...prevRooms, response.data.room]);
+      .post("https://muxtasham2-2.onrender.com/book-room", {
+        roomId: selectedRoom._id, // MongoDB ObjectId
+        ...newBooking,
+      })
+      .then(() => {
+        fetchRooms(); // 🆕 Xonalarni qayta yuklaymiz
+        setIsModalOpen(false);
+        setSelectedRoom(null);
+        setName("");
+        setPhone("");
+        setDate(new Date().toISOString().split("T")[0]);
+        setTimeSlot("kunduzgi");
+        alert("Xona muvaffaqiyatli band qilindi!");
       })
       .catch((error) => {
-        console.error("❌ Xatolik:", error);
-        alert("Xona qo‘shishda xatolik yuz berdi!");
+        console.error(error);
+        alert("Xatolik yuz berdi!");
       });
   };
   const fetchRooms = () => {
@@ -69,11 +87,6 @@ const Home = () => {
     fetchRooms();
   }, []);
 
-  const handleBookRoom = () => {
-    if (!selectedRoom || !name.trim() || !date) {
-      alert("Iltimos, ism va sana maydonlarini to‘ldiring!");
-      return;
-    }
 
     const newBooking = {
       name,
@@ -387,6 +400,5 @@ const Home = () => {
       </div>
     </section>
   );
-};
 
 export default Home;
