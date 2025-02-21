@@ -2,32 +2,42 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-dotenv.config();
 
+// .env faylni yuklash
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// MongoDB ulanishi
+// 🔍 MongoDB ulanishi uchun muhim tekshiruv
+if (!process.env.MONGO_URI) {
+  console.error("❌ MONGO_URI .env faylda mavjud emas!");
+  process.exit(1); // Serverni to‘xtatish
+}
+
 const MONGO_URI = process.env.MONGO_URI;
 
+// MongoDB-ga ulanish
 mongoose
   .connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("✅ MongoDB ga ulanish muvaffaqiyatli amalga oshirildi"))
-  .catch((err) => console.error("❌ MongoDB ga ulanishda xatolik:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB ga ulanishda xatolik:", err);
+    process.exit(1); // Ulana olmasa, serverni to‘xtatish
+  });
 
-// Modellar
+// 🔥 Modellar
 const bookingSchema = new mongoose.Schema({
-  guestName: String,
-  checkIn: Date,
-  checkOut: Date,
+  guestName: { type: String, required: true },
+  checkIn: { type: Date, required: true },
+  checkOut: { type: Date, required: true },
 });
 
 const roomSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   booked: [bookingSchema],
 });
 
@@ -53,22 +63,21 @@ app.post("/book-room", async (req, res) => {
   try {
     const { roomId, guestName, checkIn, checkOut } = req.body;
 
-    // Yangi bandlik yaratish
-    const newBooking = { guestName, checkIn, checkOut };
+    if (!roomId || !guestName || !checkIn || !checkOut) {
+      return res.status(400).json({ message: "Barcha maydonlar to‘ldirilishi shart" });
+    }
 
-    // Xonani topib, bandlikni qo'shish
     const room = await Room.findById(roomId);
     if (!room) {
       return res.status(404).json({ message: "Xona topilmadi" });
     }
 
+    // Yangi bandlik yaratish
+    const newBooking = { guestName, checkIn, checkOut };
     room.booked.push(newBooking);
     await room.save();
 
-    res.json({
-      message: "Xona muvaffaqiyatli band qilindi!",
-      room,
-    });
+    res.json({ message: "Xona muvaffaqiyatli band qilindi!", room });
   } catch (err) {
     console.error("❌ Xonani band qilishda xatolik:", err);
     res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
@@ -80,18 +89,19 @@ app.delete("/delete-booking/:roomId/:bookingId", async (req, res) => {
   try {
     const { roomId, bookingId } = req.params;
 
-    // Xonani topish
     const room = await Room.findById(roomId);
     if (!room) {
       return res.status(404).json({ message: "Xona topilmadi" });
     }
 
-    // Bandlikni topib, o'chirish
-    room.booked = room.booked.filter(
-      (booking) => booking._id.toString() !== bookingId
-    );
-    await room.save();
+    const initialLength = room.booked.length;
+    room.booked = room.booked.filter((booking) => booking._id.toString() !== bookingId);
 
+    if (room.booked.length === initialLength) {
+      return res.status(404).json({ message: "Bandlik topilmadi" });
+    }
+
+    await room.save();
     res.json({ message: "Bandlik muvaffaqiyatli o‘chirildi!" });
   } catch (err) {
     console.error("❌ Bandlikni o‘chirishda xatolik:", err);
@@ -99,7 +109,7 @@ app.delete("/delete-booking/:roomId/:bookingId", async (req, res) => {
   }
 });
 
-// ✅ Server xatolarini ushlash
+// ✅ Xatolarni ushlash
 app.use((err, req, res, next) => {
   console.error("❌ Server xatosi:", err);
   res.status(500).json({ message: "Ichki server xatosi yuz berdi" });
