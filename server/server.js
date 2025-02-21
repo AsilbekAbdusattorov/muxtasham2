@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // MongoDB ulanishi
-const MONGO_URI = "mongodb+srv://shop7347:Asilbek2007@cluster0.nob2u.mongodb.net/muhtasham?retryWrites=true&w=majority&appName=Cluster0";
+const MONGO_URI = process.env.MONGO_URI;
 
 mongoose
   .connect(MONGO_URI, {
